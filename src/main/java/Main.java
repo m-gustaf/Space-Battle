@@ -11,6 +11,8 @@ public class Main {
         Terminal terminal = terminalFactory.createTerminal();
         terminal.setCursorVisible(false);
 
+        //Hej hopp!
+
 
     }
 }
