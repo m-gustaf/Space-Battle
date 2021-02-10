@@ -1,11 +1,11 @@
-public class Spaceship {
+public class LaserBeam {
     private int x;
     private int y;
     private int oldX;
     private int oldY;
     private char symbol;
 
-    public Spaceship(int x, int y, char symbol) {
+    public LaserBeam(int x, int y, char symbol) {
         this.x = x;
         this.y = y;
         this.symbol = symbol;
@@ -33,9 +33,9 @@ public class Spaceship {
         return symbol;
     }
 
-    public void moveDown() {
+    public void moveUp() {
         oldX = x;
         oldY = y;
-        y += 1;
+        y -= 4;
     }
 }

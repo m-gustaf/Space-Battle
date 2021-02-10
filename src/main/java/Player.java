@@ -9,8 +9,8 @@ public class Player {
         this.x = x;
         this.y = y;
         this.symbol = symbol;
-        this.oldY = oldY;
         this.oldX = oldX;
+        this.oldY = oldY;
     }
 
     public int getX() {
@@ -33,15 +33,15 @@ public class Player {
         return symbol;
     }
 
-    public void moveLeft(){
+    public void moveLeft() {
         oldX = x;
         oldY = y;
-        x -= 2;
+        x -= 1;
     }
 
-    public void moveRight(){
+    public void moveRight() {
         oldX = x;
         oldY = y;
-        x += 2;
+        x += 1;
     }
 }
