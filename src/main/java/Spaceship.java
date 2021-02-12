@@ -13,6 +13,9 @@ public class Spaceship {
         this.oldY = oldY;
     }
 
+    public Spaceship() {;
+    }
+
     public int getX() {
         return x;
     }
@@ -27,6 +30,14 @@ public class Spaceship {
 
     public int getOldY() {
         return oldY;
+    }
+
+    public void setY(int y) {
+        this.y = y-1;
+    }
+
+    public void setSymbol(char symbol) {
+        this.symbol = symbol;
     }
 
     public char getSymbol() {

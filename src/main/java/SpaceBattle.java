@@ -5,26 +5,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-
 public class SpaceBattle {
 
     public static void main(String[] args) throws Exception {
+
         Terminal terminal = createTerminal();
+
+        Spaceship spaceship = new Spaceship();
+        Score score = new Score();
 
         Player player = createPlayer();
         drawPlayer(terminal, player);
 
-        Spaceship spaceship = createSpaceship();
-        drawSpaceships(terminal, spaceship);
-
         do {
+            gameTitle(terminal);
+            gameScore(terminal, score);
+
+            if (spaceship.getSymbol() == ' ') {
+                spaceship = createSpaceship();
+            }
+
             KeyStroke keyStroke = getUserKeyStroke(terminal, spaceship);
 
-            movePlayer(player, keyStroke);
+            movePlayer(player, spaceship, score, terminal, keyStroke);
             drawPlayer(terminal, player);
 
-            moveSpaceships(spaceship);
-            drawSpaceships(terminal, spaceship);
+            moveSpaceship(spaceship);
+            drawSpaceship(terminal, spaceship);
 
         } while (true);
     }
@@ -44,9 +51,10 @@ public class SpaceBattle {
         int randomX = ThreadLocalRandom.current().nextInt(0,80);
         int randomShip = ThreadLocalRandom.current().nextInt(0,3);
         ArrayList<Spaceship> listOfSpaceships = new ArrayList<>();
-        listOfSpaceships.add(new Spaceship(randomX,0,'V'));
-        listOfSpaceships.add(new Spaceship(randomX,0,'H'));
-        listOfSpaceships.add(new Spaceship(randomX,0,'Ö'));
+        listOfSpaceships.add(new Spaceship(randomX,0,'¥'));
+        listOfSpaceships.add(new Spaceship(randomX,0,'Ÿ'));
+        listOfSpaceships.add(new Spaceship(randomX,0,'v'));
+        listOfSpaceships.add(new Spaceship(randomX,0,'Ü'));
         return listOfSpaceships.get(randomShip);
     }
 
@@ -60,7 +68,7 @@ public class SpaceBattle {
         terminal.flush();
     }
 
-    private static void drawSpaceships(Terminal terminal, Spaceship spaceship) throws IOException {
+    private static void drawSpaceship(Terminal terminal, Spaceship spaceship) throws IOException {
         terminal.setCursorPosition(spaceship.getOldX(), spaceship.getOldY());
         terminal.putCharacter(' ');
 
@@ -70,18 +78,29 @@ public class SpaceBattle {
         terminal.flush();
     }
 
-    private static void movePlayer(Player player, KeyStroke keyStroke) {
+    private static void movePlayer(Player player, Spaceship spaceship, Score score, Terminal terminal, KeyStroke keyStroke) throws IOException {
         switch (keyStroke.getKeyType()) {
             case ArrowLeft:
                 player.moveLeft();
+                spaceship.setY(spaceship.getY());
                 break;
             case ArrowRight:
                 player.moveRight();
+                spaceship.setY(spaceship.getY());
+                break;
+            case ArrowDown:
+                terminal.bell(); //dropping bomb
+                spaceship.setSymbol(' ');
+                terminal.flush();
+                score.updateScore();
+                break;
+            case ArrowUp:
+
                 break;
         }
     }
 
-    private static void moveSpaceships(Spaceship spaceship) {
+    private static void moveSpaceship(Spaceship spaceship) {
         spaceship.moveDown();
     }
 
@@ -90,13 +109,32 @@ public class SpaceBattle {
         int index = 0;
         do {
             Thread.sleep(5);
-            if (index % 100 == 0) {
-                moveSpaceships(spaceship);
-                drawSpaceships(terminal, spaceship);
+            if (index % 50 == 0) {
+                moveSpaceship(spaceship);
+                drawSpaceship(terminal, spaceship);
             }
             index++;
             keyStroke = terminal.pollInput();
         } while (keyStroke == null);
         return keyStroke;
+    }
+
+    private static void gameTitle(Terminal terminal) throws InterruptedException, IOException {
+        String title = "SPACE BATTLE";
+        for (int i = 0; i < title.length(); i++) {
+            terminal.setCursorPosition(i+2,1);
+            terminal.putCharacter(title.charAt(i));
+        }
+    }
+
+    private static void gameScore(Terminal terminal, Score score) throws InterruptedException, IOException {
+
+        String displayScore = "Score: " + score.getScore();
+
+        for (int i = 0; i < displayScore.length(); i++) {
+            terminal.setCursorPosition(i+2,3);
+            terminal.putCharacter(displayScore.charAt(i));
+        }
+
     }
 }
