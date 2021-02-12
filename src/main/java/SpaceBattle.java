@@ -13,38 +13,34 @@ public class SpaceBattle {
 
         Score score = new Score();
 
-        Spaceship spaceship = createSpaceship();
+        Alien alien = createSpaceship();
         Player player = createPlayer();
 
         drawPlayer(terminal, player);
-        drawSpaceship(terminal, spaceship);
+        drawSpaceship(terminal, alien);
 
         do {
             gameTitle(terminal);
             playerScore(terminal, score);
-            opponentScore(terminal, score);
+            alienScore(terminal, score);
 
-            if (spaceship.isHidden() == true) { //enemy isHidden = true id player and enemy is at same Y value.
-                spaceship = createSpaceship();
+            if (alien.isHidden() == true) { //enemy isHidden = true if player and enemy is at same Y value.
+                alien = createSpaceship();
             }
 
-            KeyStroke keyStroke = getUserKeyStroke(terminal, player, spaceship, score);
+            KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score);
 
-            movePlayer(player, spaceship, score, terminal, keyStroke);
+            movePlayer(player, alien, score, terminal, keyStroke);
             drawPlayer(terminal, player);
 
-            moveSpaceship(spaceship);
-            drawSpaceship(terminal, spaceship);
+            moveSpaceship(alien);
+            drawSpaceship(terminal, alien);
 
-            if (score.getPlayerScore() == 5 || score.getOpponentScore() == 5) {
-                break;
-            }
-
-        } while (true);
+        } while (score.getPlayerScore() < 2 && score.getAlienScore() < 2);
 
         gameOver(terminal, score);
         playerScore(terminal, score);
-        opponentScore(terminal, score);
+        alienScore(terminal, score);
     }
 
     private static Terminal createTerminal() throws IOException {
@@ -58,15 +54,15 @@ public class SpaceBattle {
         return new Player(39, 23, 'A');
     }
 
-    private static Spaceship createSpaceship() {
+    private static Alien createSpaceship() {
         int randomX = ThreadLocalRandom.current().nextInt(0, 80);
         int randomShip = ThreadLocalRandom.current().nextInt(0, 3);
-        ArrayList<Spaceship> listOfSpaceships = new ArrayList<>();
-        listOfSpaceships.add(new Spaceship(randomX, 0, '¥'));
-        listOfSpaceships.add(new Spaceship(randomX, 0, 'Ÿ'));
-        listOfSpaceships.add(new Spaceship(randomX, 0, 'v'));
-        listOfSpaceships.add(new Spaceship(randomX, 0, 'Ü'));
-        return listOfSpaceships.get(randomShip);
+        ArrayList<Alien> listOfAliens = new ArrayList<>();
+        listOfAliens.add(new Alien(randomX, 0, '¥'));
+        listOfAliens.add(new Alien(randomX, 0, 'Ÿ'));
+        listOfAliens.add(new Alien(randomX, 0, 'v'));
+        listOfAliens.add(new Alien(randomX, 0, 'Ü'));
+        return listOfAliens.get(randomShip);
     }
 
     private static void drawPlayer(Terminal terminal, Player player) throws IOException {
@@ -79,31 +75,31 @@ public class SpaceBattle {
         terminal.flush();
     }
 
-    private static void drawSpaceship(Terminal terminal, Spaceship spaceship) throws IOException {
-        terminal.setCursorPosition(spaceship.getOldX(), spaceship.getOldY());
+    private static void drawSpaceship(Terminal terminal, Alien alien) throws IOException {
+        terminal.setCursorPosition(alien.getOldX(), alien.getOldY());
         terminal.putCharacter(' ');
 
-        terminal.setCursorPosition(spaceship.getX(), spaceship.getY());
-        terminal.putCharacter(spaceship.getSymbol());
+        terminal.setCursorPosition(alien.getX(), alien.getY());
+        terminal.putCharacter(alien.getSymbol());
 
         terminal.flush();
     }
 
-    private static void movePlayer(Player player, Spaceship spaceship, Score score, Terminal terminal, KeyStroke keyStroke) throws IOException {
+    private static void movePlayer(Player player, Alien alien, Score score, Terminal terminal, KeyStroke keyStroke) throws IOException {
         switch (keyStroke.getKeyType()) {
             case ArrowLeft:
                 player.moveLeft();
-                spaceship.setY(spaceship.getY());
+                alien.setY(alien.getY());
                 break;
             case ArrowRight:
                 player.moveRight();
-                spaceship.setY(spaceship.getY());
+                alien.setY(alien.getY());
                 break;
             case ArrowDown:
                 terminal.bell(); //dropping bomb
-                if (spaceship.getX() == player.getX() || spaceship.getX() + 1 == player.getX() || spaceship.getX() - 1 == player.getX()) {
-                    spaceship.setSymbol(' ');
-                    spaceship.setIsHidden(true);
+                if (alien.getX() == player.getX() || alien.getX() + 1 == player.getX() || alien.getX() - 1 == player.getX()) {
+                    alien.setSymbol(' ');
+                    alien.setIsHidden(true);
                     score.updatePlayerScore();
                     terminal.flush();
                     break;
@@ -111,23 +107,23 @@ public class SpaceBattle {
         }
     }
 
-    private static void moveSpaceship(Spaceship spaceship) {
-        spaceship.moveDown();
+    private static void moveSpaceship(Alien alien) {
+        alien.moveDown();
     }
 
-    private static KeyStroke getUserKeyStroke(Terminal terminal, Player player, Spaceship spaceship, Score score) throws InterruptedException, IOException {
+    private static KeyStroke getUserKeyStroke(Terminal terminal, Player player, Alien alien, Score score) throws InterruptedException, IOException {
         KeyStroke keyStroke;
         int index = 0;
-        if (spaceship.getSymbol() == 'Ÿ') { //to have one type of ship move faster
+        if (alien.getSymbol() == 'Ÿ') { //to have one type of ship move faster
             do {
                 Thread.sleep(5);
                 if (index % 20 == 0) {
-                    moveSpaceship(spaceship);
-                    drawSpaceship(terminal, spaceship);
-                    if (player.getY() == spaceship.getY()) {
-                        spaceship.setSymbol(' ');
-                        spaceship.setIsHidden(true);
-                        score.updateOpponentScore();
+                    moveSpaceship(alien);
+                    drawSpaceship(terminal, alien);
+                    if (player.getY() == alien.getY()) {
+                        alien.setSymbol(' ');
+                        alien.setIsHidden(true);
+                        score.updateAlienScore();
                     }
                 }
                 index++;
@@ -137,12 +133,12 @@ public class SpaceBattle {
             do {
                 Thread.sleep(5);
                 if (index % 50 == 0) {
-                    moveSpaceship(spaceship);
-                    drawSpaceship(terminal, spaceship);
-                    if (player.getY() == spaceship.getY()) {
-                        spaceship.setSymbol(' ');
-                        spaceship.setIsHidden(true);
-                        score.updateOpponentScore();
+                    moveSpaceship(alien);
+                    drawSpaceship(terminal, alien);
+                    if (player.getY() == alien.getY()) {
+                        alien.setSymbol(' ');
+                        alien.setIsHidden(true);
+                        score.updateAlienScore();
                     }
                 }
                 index++;
@@ -169,36 +165,36 @@ public class SpaceBattle {
         }
     }
 
-    private static void opponentScore(Terminal terminal, Score score) throws InterruptedException, IOException {
-        String displayOpponentScore = "Opponent score: " + score.getOpponentScore();
-        for (int i = 0; i < displayOpponentScore.length(); i++) {
+    private static void alienScore(Terminal terminal, Score score) throws InterruptedException, IOException {
+        String displayAlienScore = "Alien score: " + score.getAlienScore();
+        for (int i = 0; i < displayAlienScore.length(); i++) {
             terminal.setCursorPosition(i + 2, 4);
-            terminal.putCharacter(displayOpponentScore.charAt(i));
+            terminal.putCharacter(displayAlienScore.charAt(i));
             terminal.flush();
         }
     }
 
     private static void gameOver(Terminal terminal, Score score) throws InterruptedException, IOException {
+        String gameOver = "GAME OVER";
         String playerWon = "Congratulations, you won!";
         String opponentWon = "Bad luck, you lost!";
-        String gameOver = "GAME OVER";
 
         for (int i = 0; i < gameOver.length(); i++) {
-            terminal.setCursorPosition(i + 10, 12);
+            terminal.setCursorPosition(i + 25, 8);
             terminal.putCharacter(gameOver.charAt(i));
             terminal.flush();
         }
 
-        if (score.getPlayerScore() > score.getOpponentScore()) {
+        if (score.getPlayerScore() > score.getAlienScore()) {
             for (int i = 0; i < playerWon.length(); i++) {
-                terminal.setCursorPosition(i + 10, 10);
+                terminal.setCursorPosition(i + 25, 10);
                 terminal.putCharacter(playerWon.charAt(i));
                 terminal.flush();
             }
         }
-        if (score.getOpponentScore() > score.getPlayerScore()) {
+        if (score.getAlienScore() > score.getPlayerScore()) {
             for (int i = 0; i < opponentWon.length(); i++) {
-                terminal.setCursorPosition(i + 10, 10);
+                terminal.setCursorPosition(i + 25, 10);
                 terminal.putCharacter(opponentWon.charAt(i));
                 terminal.flush();
             }

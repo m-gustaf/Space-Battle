@@ -1,6 +1,6 @@
 public class Score {
     private int playerScore;
-    private int opponentScore;
+    private int alienScore;
 
     public int getPlayerScore() {
         return playerScore;
@@ -10,11 +10,11 @@ public class Score {
         playerScore++;
     }
 
-    public int getOpponentScore() {
-        return opponentScore;
+    public int getAlienScore() {
+        return alienScore;
     }
 
-    public void updateOpponentScore() {
-        opponentScore++;
+    public void updateAlienScore() {
+        alienScore++;
     }
 }

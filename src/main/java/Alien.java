@@ -1,7 +1,7 @@
-public class Spaceship extends Character {
+public class Alien extends Character {
     private boolean isHidden;
 
-    public Spaceship(int x, int y, char symbol) {
+    public Alien(int x, int y, char symbol) {
         this.x = x;
         this.y = y;
         this.symbol = symbol;
@@ -9,7 +9,7 @@ public class Spaceship extends Character {
         this.oldY = oldY;
     }
 
-    public Spaceship() {
+    public Alien() {
     }
 
     public int getX() {
