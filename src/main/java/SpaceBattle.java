@@ -11,11 +11,11 @@ public class SpaceBattle {
 
         Terminal terminal = createTerminal();
 
-        Spaceship spaceship = new Spaceship();
-        spaceship = createSpaceship();
         Score score = new Score();
 
+        Spaceship spaceship = createSpaceship();
         Player player = createPlayer();
+
         drawPlayer(terminal, player);
         drawSpaceship(terminal, spaceship);
 
@@ -92,9 +92,11 @@ public class SpaceBattle {
                 break;
             case ArrowDown:
                 terminal.bell(); //dropping bomb
-                spaceship.setSymbol(' ');
-                terminal.flush();
-                score.updateScore();
+                if (spaceship.getX() == player.getX() || spaceship.getX()+1 == player.getX() || spaceship.getX()-1 == player.getX()) {
+                    spaceship.setSymbol(' ');
+                    terminal.flush();
+                    score.updateScore();
+                }
                 break;
             case ArrowUp:
                 break;
@@ -108,15 +110,28 @@ public class SpaceBattle {
     private static KeyStroke getUserKeyStroke(Terminal terminal, Spaceship spaceship) throws InterruptedException, IOException {
         KeyStroke keyStroke;
         int index = 0;
-        do {
-            Thread.sleep(5);
-            if (index % 50 == 0) {
-                moveSpaceship(spaceship);
-                drawSpaceship(terminal, spaceship);
-            }
-            index++;
-            keyStroke = terminal.pollInput();
-        } while (keyStroke == null);
+        if (spaceship.getSymbol() == 'Ÿ') { //to have one type of ship move faster
+            do {
+                Thread.sleep(5);
+                if (index % 20 == 0) {
+                    moveSpaceship(spaceship);
+                    drawSpaceship(terminal, spaceship);
+                }
+                index++;
+                keyStroke = terminal.pollInput();
+            } while (keyStroke == null);
+        }
+        else {
+            do {
+                Thread.sleep(5);
+                if (index % 50 == 0) {
+                    moveSpaceship(spaceship);
+                    drawSpaceship(terminal, spaceship);
+                }
+                index++;
+                keyStroke = terminal.pollInput();
+            } while (keyStroke == null);
+        }
         return keyStroke;
     }
 
