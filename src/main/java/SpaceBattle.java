@@ -12,10 +12,12 @@ public class SpaceBattle {
         Terminal terminal = createTerminal();
 
         Spaceship spaceship = new Spaceship();
+        spaceship = createSpaceship();
         Score score = new Score();
 
         Player player = createPlayer();
         drawPlayer(terminal, player);
+        drawSpaceship(terminal, spaceship);
 
         do {
             gameTitle(terminal);
