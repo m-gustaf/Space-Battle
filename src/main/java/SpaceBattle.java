@@ -134,6 +134,5 @@ public class SpaceBattle {
             terminal.setCursorPosition(i+2,3);
             terminal.putCharacter(displayScore.charAt(i));
         }
-
     }
 }
