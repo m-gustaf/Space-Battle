@@ -36,8 +36,15 @@ public class SpaceBattle {
             moveSpaceship(spaceship);
             drawSpaceship(terminal, spaceship);
 
+            if (score.getPlayerScore() == 5 || score.getOpponentScore() == 5) {
+                break;
+            }
+
         } while (true);
 
+        gameOver(terminal, score);
+        playerScore(terminal, score);
+        opponentScore(terminal, score);
     }
 
     private static Terminal createTerminal() throws IOException {
@@ -52,13 +59,13 @@ public class SpaceBattle {
     }
 
     private static Spaceship createSpaceship() {
-        int randomX = ThreadLocalRandom.current().nextInt(0,80);
-        int randomShip = ThreadLocalRandom.current().nextInt(0,3);
+        int randomX = ThreadLocalRandom.current().nextInt(0, 80);
+        int randomShip = ThreadLocalRandom.current().nextInt(0, 3);
         ArrayList<Spaceship> listOfSpaceships = new ArrayList<>();
-        listOfSpaceships.add(new Spaceship(randomX,0,'¥'));
-        listOfSpaceships.add(new Spaceship(randomX,0,'Ÿ'));
-        listOfSpaceships.add(new Spaceship(randomX,0,'v'));
-        listOfSpaceships.add(new Spaceship(randomX,0,'Ü'));
+        listOfSpaceships.add(new Spaceship(randomX, 0, '¥'));
+        listOfSpaceships.add(new Spaceship(randomX, 0, 'Ÿ'));
+        listOfSpaceships.add(new Spaceship(randomX, 0, 'v'));
+        listOfSpaceships.add(new Spaceship(randomX, 0, 'Ü'));
         return listOfSpaceships.get(randomShip);
     }
 
@@ -126,8 +133,7 @@ public class SpaceBattle {
                 index++;
                 keyStroke = terminal.pollInput();
             } while (keyStroke == null);
-        }
-        else {
+        } else {
             do {
                 Thread.sleep(5);
                 if (index % 50 == 0) {
@@ -149,7 +155,7 @@ public class SpaceBattle {
     private static void gameTitle(Terminal terminal) throws InterruptedException, IOException {
         String title = "SPACE BATTLE";
         for (int i = 0; i < title.length(); i++) {
-            terminal.setCursorPosition(i+2,1);
+            terminal.setCursorPosition(i + 2, 1);
             terminal.putCharacter(title.charAt(i));
         }
     }
@@ -157,16 +163,46 @@ public class SpaceBattle {
     private static void playerScore(Terminal terminal, Score score) throws InterruptedException, IOException {
         String displayPlayerScore = "Player score: " + score.getPlayerScore();
         for (int i = 0; i < displayPlayerScore.length(); i++) {
-            terminal.setCursorPosition(i+2,3);
+            terminal.setCursorPosition(i + 2, 3);
             terminal.putCharacter(displayPlayerScore.charAt(i));
+            terminal.flush();
         }
     }
 
     private static void opponentScore(Terminal terminal, Score score) throws InterruptedException, IOException {
-        String displayPlayerScore = "Opponent score: " + score.getOpponentScore();
-        for (int i = 0; i < displayPlayerScore.length(); i++) {
-            terminal.setCursorPosition(i+2,4);
-            terminal.putCharacter(displayPlayerScore.charAt(i));
+        String displayOpponentScore = "Opponent score: " + score.getOpponentScore();
+        for (int i = 0; i < displayOpponentScore.length(); i++) {
+            terminal.setCursorPosition(i + 2, 4);
+            terminal.putCharacter(displayOpponentScore.charAt(i));
+            terminal.flush();
+        }
+    }
+
+    private static void gameOver(Terminal terminal, Score score) throws InterruptedException, IOException {
+        String playerWon = "Congratulations, you won!";
+        String opponentWon = "Bad luck, you lost!";
+        String gameOver = "GAME OVER";
+
+        for (int i = 0; i < gameOver.length(); i++) {
+            terminal.setCursorPosition(i + 10, 12);
+            terminal.putCharacter(gameOver.charAt(i));
+            terminal.flush();
+        }
+
+        if (score.getPlayerScore() > score.getOpponentScore()) {
+            for (int i = 0; i < playerWon.length(); i++) {
+                terminal.setCursorPosition(i + 10, 10);
+                terminal.putCharacter(playerWon.charAt(i));
+                terminal.flush();
+            }
+        }
+        if (score.getOpponentScore() > score.getPlayerScore()) {
+            for (int i = 0; i < opponentWon.length(); i++) {
+                terminal.setCursorPosition(i + 10, 10);
+                terminal.putCharacter(opponentWon.charAt(i));
+                terminal.flush();
+            }
         }
     }
 }
+
