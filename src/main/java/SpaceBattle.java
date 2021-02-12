@@ -15,6 +15,7 @@ public class SpaceBattle {
 
         Alien alien = createSpaceship();
         Player player = createPlayer();
+        Laser laser = createLaser(player);
 
         drawPlayer(terminal, player);
         drawSpaceship(terminal, alien);
@@ -24,19 +25,28 @@ public class SpaceBattle {
             playerScore(terminal, score);
             alienScore(terminal, score);
 
+            if (laser.isActive() == true) { //if laser isActive fire away
+                laser = createLaser(player);
+                drawLaser(terminal, laser);
+                Thread.sleep(40);
+                laser.setSymbol(' ');
+                drawLaser(terminal, laser);
+                terminal.flush();
+            }
+
             if (alien.isHidden() == true) { //enemy isHidden = true if player and enemy is at same Y value.
                 alien = createSpaceship();
             }
 
             KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score);
 
-            movePlayer(player, alien, score, terminal, keyStroke);
+            movePlayer(player, alien, laser, score, terminal, keyStroke);
             drawPlayer(terminal, player);
 
             moveSpaceship(alien);
             drawSpaceship(terminal, alien);
 
-        } while (score.getPlayerScore() < 2 && score.getAlienScore() < 2);
+        } while (score.getPlayerScore() < 5 && score.getAlienScore() < 5);
 
         gameOver(terminal, score);
         playerScore(terminal, score);
@@ -65,6 +75,10 @@ public class SpaceBattle {
         return listOfAliens.get(randomShip);
     }
 
+    private static Laser createLaser(Player player) {
+        return new Laser(player.getX(), player.getY(),'|');
+    }
+
     private static void drawPlayer(Terminal terminal, Player player) throws IOException {
         terminal.setCursorPosition(player.getOldX(), player.getOldY());
         terminal.putCharacter(' ');
@@ -85,7 +99,14 @@ public class SpaceBattle {
         terminal.flush();
     }
 
-    private static void movePlayer(Player player, Alien alien, Score score, Terminal terminal, KeyStroke keyStroke) throws IOException {
+    private static void drawLaser(Terminal terminal, Laser laser) throws InterruptedException, IOException {
+        terminal.setCursorPosition(laser.getX(), laser.getY()-1);
+        terminal.putCharacter(laser.getSymbol());
+
+        terminal.flush();
+    }
+
+    private static void movePlayer(Player player, Alien alien, Laser laser, Score score, Terminal terminal, KeyStroke keyStroke) throws IOException {
         switch (keyStroke.getKeyType()) {
             case ArrowLeft:
                 player.moveLeft();
@@ -96,8 +117,10 @@ public class SpaceBattle {
                 alien.setY(alien.getY());
                 break;
             case ArrowDown:
-                terminal.bell(); //dropping bomb
+                laser.setActive(true);
                 if (alien.getX() == player.getX() || alien.getX() + 1 == player.getX() || alien.getX() - 1 == player.getX()) {
+                    laser.setActive(true);
+                    terminal.bell();
                     alien.setSymbol(' ');
                     alien.setIsHidden(true);
                     score.updatePlayerScore();
