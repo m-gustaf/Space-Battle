@@ -1,4 +1,5 @@
 public class Spaceship extends Character {
+    private boolean isHidden;
 
     public Spaceship(int x, int y, char symbol) {
         this.x = x;
@@ -37,6 +38,14 @@ public class Spaceship extends Character {
 
     public char getSymbol() {
         return symbol;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(boolean hidden) {
+        isHidden = hidden;
     }
 
     public void moveDown() {

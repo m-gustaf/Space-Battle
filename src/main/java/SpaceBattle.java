@@ -21,13 +21,14 @@ public class SpaceBattle {
 
         do {
             gameTitle(terminal);
-            gameScore(terminal, score);
+            playerScore(terminal, score);
+            opponentScore(terminal, score);
 
-            if (spaceship.getSymbol() == ' ') {
+            if (spaceship.isHidden() == true) { //enemy isHidden = true id player and enemy is at same Y value.
                 spaceship = createSpaceship();
             }
 
-            KeyStroke keyStroke = getUserKeyStroke(terminal, spaceship);
+            KeyStroke keyStroke = getUserKeyStroke(terminal, player, spaceship, score);
 
             movePlayer(player, spaceship, score, terminal, keyStroke);
             drawPlayer(terminal, player);
@@ -36,6 +37,7 @@ public class SpaceBattle {
             drawSpaceship(terminal, spaceship);
 
         } while (true);
+
     }
 
     private static Terminal createTerminal() throws IOException {
@@ -92,14 +94,13 @@ public class SpaceBattle {
                 break;
             case ArrowDown:
                 terminal.bell(); //dropping bomb
-                if (spaceship.getX() == player.getX() || spaceship.getX()+1 == player.getX() || spaceship.getX()-1 == player.getX()) {
+                if (spaceship.getX() == player.getX() || spaceship.getX() + 1 == player.getX() || spaceship.getX() - 1 == player.getX()) {
                     spaceship.setSymbol(' ');
+                    spaceship.setIsHidden(true);
+                    score.updatePlayerScore();
                     terminal.flush();
-                    score.updateScore();
+                    break;
                 }
-                break;
-            case ArrowUp:
-                break;
         }
     }
 
@@ -107,7 +108,7 @@ public class SpaceBattle {
         spaceship.moveDown();
     }
 
-    private static KeyStroke getUserKeyStroke(Terminal terminal, Spaceship spaceship) throws InterruptedException, IOException {
+    private static KeyStroke getUserKeyStroke(Terminal terminal, Player player, Spaceship spaceship, Score score) throws InterruptedException, IOException {
         KeyStroke keyStroke;
         int index = 0;
         if (spaceship.getSymbol() == 'Ÿ') { //to have one type of ship move faster
@@ -116,6 +117,11 @@ public class SpaceBattle {
                 if (index % 20 == 0) {
                     moveSpaceship(spaceship);
                     drawSpaceship(terminal, spaceship);
+                    if (player.getY() == spaceship.getY()) {
+                        spaceship.setSymbol(' ');
+                        spaceship.setIsHidden(true);
+                        score.updateOpponentScore();
+                    }
                 }
                 index++;
                 keyStroke = terminal.pollInput();
@@ -127,6 +133,11 @@ public class SpaceBattle {
                 if (index % 50 == 0) {
                     moveSpaceship(spaceship);
                     drawSpaceship(terminal, spaceship);
+                    if (player.getY() == spaceship.getY()) {
+                        spaceship.setSymbol(' ');
+                        spaceship.setIsHidden(true);
+                        score.updateOpponentScore();
+                    }
                 }
                 index++;
                 keyStroke = terminal.pollInput();
@@ -143,11 +154,19 @@ public class SpaceBattle {
         }
     }
 
-    private static void gameScore(Terminal terminal, Score score) throws InterruptedException, IOException {
-        String displayScore = "Score: " + score.getScore();
-        for (int i = 0; i < displayScore.length(); i++) {
+    private static void playerScore(Terminal terminal, Score score) throws InterruptedException, IOException {
+        String displayPlayerScore = "Player score: " + score.getPlayerScore();
+        for (int i = 0; i < displayPlayerScore.length(); i++) {
             terminal.setCursorPosition(i+2,3);
-            terminal.putCharacter(displayScore.charAt(i));
+            terminal.putCharacter(displayPlayerScore.charAt(i));
+        }
+    }
+
+    private static void opponentScore(Terminal terminal, Score score) throws InterruptedException, IOException {
+        String displayPlayerScore = "Opponent score: " + score.getOpponentScore();
+        for (int i = 0; i < displayPlayerScore.length(); i++) {
+            terminal.setCursorPosition(i+2,4);
+            terminal.putCharacter(displayPlayerScore.charAt(i));
         }
     }
 }

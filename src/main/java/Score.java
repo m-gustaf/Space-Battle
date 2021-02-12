@@ -1,11 +1,20 @@
 public class Score {
-    private int score;
+    private int playerScore;
+    private int opponentScore;
 
-    public int getScore() {
-        return score;
+    public int getPlayerScore() {
+        return playerScore;
     }
 
-    public void updateScore() {
-        score++;
+    public void updatePlayerScore() {
+        playerScore++;
+    }
+
+    public int getOpponentScore() {
+        return opponentScore;
+    }
+
+    public void updateOpponentScore() {
+        opponentScore++;
     }
 }
