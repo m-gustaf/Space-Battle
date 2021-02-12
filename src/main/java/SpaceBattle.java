@@ -95,7 +95,6 @@ public class SpaceBattle {
                 score.updateScore();
                 break;
             case ArrowUp:
-
                 break;
         }
     }
@@ -128,9 +127,7 @@ public class SpaceBattle {
     }
 
     private static void gameScore(Terminal terminal, Score score) throws InterruptedException, IOException {
-
         String displayScore = "Score: " + score.getScore();
-
         for (int i = 0; i < displayScore.length(); i++) {
             terminal.setCursorPosition(i+2,3);
             terminal.putCharacter(displayScore.charAt(i));

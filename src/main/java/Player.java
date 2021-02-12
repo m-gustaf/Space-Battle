@@ -1,9 +1,4 @@
-public class Player {
-    private int x;
-    private int y;
-    private int oldX;
-    private int oldY;
-    private char symbol;
+public class Player extends Character {
 
     public Player(int x, int y, char symbol) {
         this.x = x;

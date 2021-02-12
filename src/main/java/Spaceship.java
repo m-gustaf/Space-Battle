@@ -1,9 +1,4 @@
-public class Spaceship {
-    private int x;
-    private int y;
-    private int oldX;
-    private int oldY;
-    private char symbol;
+public class Spaceship extends Character {
 
     public Spaceship(int x, int y, char symbol) {
         this.x = x;
@@ -13,7 +8,7 @@ public class Spaceship {
         this.oldY = oldY;
     }
 
-    public Spaceship() {;
+    public Spaceship() {
     }
 
     public int getX() {
