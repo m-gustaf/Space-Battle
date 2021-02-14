@@ -4,5 +4,4 @@ public class Character {
     protected int oldX;
     protected int oldY;
     protected char symbol;
-
 }
