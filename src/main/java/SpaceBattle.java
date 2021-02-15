@@ -33,7 +33,7 @@ public class SpaceBattle {
                 terminal.flush();
             }
 
-            if (alien.isHidden() == true) { //enemy isHidden is true if player and enemy is at same Y value.
+            if (alien.isHidden() == true) { //alien isHidden is true if alien and enemy is at same Y value.
                 alien = createAlien();
             }
 
