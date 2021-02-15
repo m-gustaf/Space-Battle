@@ -115,7 +115,7 @@ public class SpaceBattle {
                 player.moveRight();
                 alien.setY(alien.getY());
                 break;
-            case ArrowDown:
+            case ArrowUp:
                 laser.setActive(true);
                 alien.setY(alien.getY());
                 if (alien.getX() == player.getX() || alien.getX() + 1 == player.getX() || alien.getX() - 1 == player.getX()) {
