@@ -9,7 +9,9 @@ public class SpaceBattle {
 
     public static void main(String[] args) throws Exception {
 
+
         Terminal terminal = createTerminal();
+        Lives lives = new Lives(3);
         Score score = new Score();
 
         Alien alien = createAlien();
@@ -19,37 +21,47 @@ public class SpaceBattle {
         drawPlayer(terminal, player);
         drawAlien(terminal, alien);
 
-        do {
-            gameTitle(terminal); //to show title while playing
-            playerScore(terminal, score); //to keep scores updated while playing
-            alienScore(terminal, score);
+        //while (lives.getLives() != 0) {
+            do {
+                gameTitle(terminal); //to show title while playing
+                playerScore(terminal, score); //to keep scores updated while playing
+                alienScore(terminal, score);
+                lives(terminal,lives);
 
-            if (laser.isActive() == true) { //if laser isActive is true ...
-                laser = createLaser(player); //... creating laser
-                drawLaser(terminal, laser); //laser drawn using symbol '|' (via constructor)
-                Thread.sleep(40); //sleep to get symbol '|' flash quickly before hiding it
-                laser.setSymbol(' '); //setting laser to symbol ' ' (blank space)
-                drawLaser(terminal, laser); //laser drawn using symbol ' ' to hide symbol '|'
-                terminal.flush();
-            }
+                if (laser.isActive() == true) { //if laser isActive is true ...
+                    laser = createLaser(player); //... creating laser
+                    drawLaser(terminal, laser); //laser drawn using symbol '|' (via constructor)
+                    Thread.sleep(40); //sleep to get symbol '|' flash quickly before hiding it
+                    laser.setSymbol(' '); //setting laser to symbol ' ' (blank space)
+                    drawLaser(terminal, laser); //laser drawn using symbol ' ' to hide symbol '|'
+                    terminal.flush();
+                }
 
-            if (alien.isHidden() == true) { //alien isHidden is true if alien and enemy is at same Y value.
-                alien = createAlien();
-            }
+                if (alien.isHidden() == true) { //alien isHidden is true if alien and enemy is at same Y value.
+                    alien = createAlien();
+                }
 
-            KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score);
+                KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score);
 
-            movePlayer(player, alien, laser, score, terminal, keyStroke);
-            drawPlayer(terminal, player);
+                movePlayer(player, alien, laser, score, terminal, keyStroke);
+                drawPlayer(terminal, player);
 
-            moveAlien(alien);
-            drawAlien(terminal, alien);
+                moveAlien(alien);
+                drawAlien(terminal, alien);
 
-        } while (score.getPlayerScore() < 5 && score.getAlienScore() < 5); //first to get score 5 win
+                if (score.getAlienScore() == 3) {
+                    lives.updateLives();
+                    score.setAlienScore(0);
+                    score.setPlayerScore(0);
+                }
+
+            } while (score.getPlayerScore() < 3 && lives.getLives() != 0); //first to get score 5 win //&& score.getAlienScore() < 5
+       // }
 
         playerScore(terminal, score);
         alienScore(terminal, score);
-        gameOver(terminal, score);
+        lives(terminal,lives);
+        gameOver(terminal, score, lives);
     }
 
     private static Terminal createTerminal() throws IOException {
@@ -203,7 +215,17 @@ public class SpaceBattle {
         }
     }
 
-    private static void gameOver(Terminal terminal, Score score) throws InterruptedException, IOException {
+    private static void lives (Terminal terminal, Lives lives) throws InterruptedException, IOException {
+        String live = "Lives: " + lives.getLives();
+            for (int i = 0; i < live.length(); i++) {
+                terminal.setCursorPosition(i + 2, 5);
+                terminal.putCharacter(live.charAt(i));
+                terminal.flush();
+
+        }
+    }
+
+    private static void gameOver(Terminal terminal, Score score, Lives lives) throws InterruptedException, IOException {
         String gameOver = "GAME OVER";
         String playerWon = "Congratulations, you won!";
         String alienWon = "You lost, try again!";
@@ -222,7 +244,7 @@ public class SpaceBattle {
                 terminal.flush();
             }
         }
-        if (score.getAlienScore() > score.getPlayerScore()) {
+        if (lives.getLives() == 0) {
             for (int i = 0; i < alienWon.length(); i++) {
                 terminal.setCursorPosition(i + 25, 10);
                 terminal.putCharacter(alienWon.charAt(i));
