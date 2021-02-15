@@ -47,9 +47,9 @@ public class SpaceBattle {
 
         } while (score.getPlayerScore() < 5 && score.getAlienScore() < 5); //first to get score 5 win
 
-        gameOver(terminal, score);
         playerScore(terminal, score);
         alienScore(terminal, score);
+        gameOver(terminal, score);
     }
 
     private static Terminal createTerminal() throws IOException {
