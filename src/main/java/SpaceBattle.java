@@ -30,10 +30,10 @@ public class SpaceBattle {
 
                 if (laser.isActive() == true) { //if laser isActive is true ...
                     laser = createLaser(player); //... creating laser
-                    drawLaser(terminal, laser); //laser drawn using symbol '|' (via constructor)
+                    drawLaser(terminal, laser, alien, player); //laser drawn using symbol '|' (via constructor)
                     Thread.sleep(40); //sleep to get symbol '|' flash quickly before hiding it
                     laser.setSymbol(' '); //setting laser to symbol ' ' (blank space)
-                    drawLaser(terminal, laser); //laser drawn using symbol ' ' to hide symbol '|'
+                    drawLaser(terminal, laser, alien, player); //laser drawn using symbol ' ' to hide symbol '|'
                     terminal.flush();
                 }
 
@@ -110,11 +110,21 @@ public class SpaceBattle {
         terminal.flush();
     }
 
-    private static void drawLaser(Terminal terminal, Laser laser) throws InterruptedException, IOException {
-        terminal.setCursorPosition(laser.getX(), laser.getY()-1);
-        terminal.putCharacter(laser.getSymbol());
-
-        terminal.flush();
+    private static void drawLaser(Terminal terminal, Laser laser, Alien alien, Player player) throws InterruptedException, IOException {
+        if (alien.getX() == player.getX() || alien.getX() + 1 == player.getX() || alien.getX() - 1 == player.getX()) {
+            int distance = player.getY() - alien.getY();
+            for (int i = 0; i < distance; i++) {
+                terminal.setCursorPosition(laser.getX(), laser.getY() - i - 1);
+                terminal.putCharacter(laser.getSymbol());
+                terminal.flush();
+            }
+        }
+        else
+            for (int i = 0; i < 22; i++) {
+                terminal.setCursorPosition(laser.getX(), laser.getY() - i - 1);
+                terminal.putCharacter(laser.getSymbol());
+                terminal.flush();
+            }
     }
 
     private static void movePlayer(Player player, Alien alien, Laser laser, Score score, Terminal terminal, KeyStroke keyStroke) throws IOException {
