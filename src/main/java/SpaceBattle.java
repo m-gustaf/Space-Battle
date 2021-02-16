@@ -194,16 +194,23 @@ public class SpaceBattle {
 
     private static void gameTitle(Terminal terminal) throws InterruptedException, IOException {
         String title = "SPACE BATTLE";
+        String rules = "Eliminate 10 aliens";
+
         for (int i = 0; i < title.length(); i++) {
             terminal.setCursorPosition(i + 2, 1);
             terminal.putCharacter(title.charAt(i));
+        }
+
+        for (int i = 0; i < rules.length(); i++) {
+            terminal.setCursorPosition(i + 2, 3);
+            terminal.putCharacter(rules.charAt(i));
         }
     }
 
     private static void playerScore(Terminal terminal, Score score) throws InterruptedException, IOException {
         String displayPlayerScore = "Score: " + score.getPlayerScore();
         for (int i = 0; i < displayPlayerScore.length(); i++) {
-            terminal.setCursorPosition(i + 2, 3);
+            terminal.setCursorPosition(i + 2, 5);
             terminal.putCharacter(displayPlayerScore.charAt(i));
             terminal.flush();
         }
@@ -212,20 +219,19 @@ public class SpaceBattle {
     private static void lives (Terminal terminal, Lives lives) throws InterruptedException, IOException {
         String live = "Lives: " + lives.getLives();
             for (int i = 0; i < live.length(); i++) {
-                terminal.setCursorPosition(i + 2, 4);
+                terminal.setCursorPosition(i + 2, 6);
                 terminal.putCharacter(live.charAt(i));
                 terminal.flush();
-
-        }
+            }
     }
 
     private static void gameOver(Terminal terminal, Score score, Lives lives) throws InterruptedException, IOException {
         String gameOver = "GAME OVER";
         String playerWon = "Congratulations, you won!";
-        String alienWon = "You lost, try again!";
+        String playerLost = "You lost, try again!";
 
         for (int i = 0; i < gameOver.length(); i++) {
-            terminal.setCursorPosition(i + 25, 8);
+            terminal.setCursorPosition(i + 25, 9);
             terminal.putCharacter(gameOver.charAt(i));
             terminal.flush();
             Thread.sleep(200); //sleep to get effect of slowly printing GAME OVER
@@ -233,15 +239,15 @@ public class SpaceBattle {
 
         if (lives.getLives() > 0) {
             for (int i = 0; i < playerWon.length(); i++) {
-                terminal.setCursorPosition(i + 25, 10);
+                terminal.setCursorPosition(i + 25, 11);
                 terminal.putCharacter(playerWon.charAt(i));
                 terminal.flush();
             }
         }
         if (lives.getLives() == 0) {
-            for (int i = 0; i < alienWon.length(); i++) {
-                terminal.setCursorPosition(i + 25, 10);
-                terminal.putCharacter(alienWon.charAt(i));
+            for (int i = 0; i < playerLost.length(); i++) {
+                terminal.setCursorPosition(i + 25, 11);
+                terminal.putCharacter(playerLost.charAt(i));
                 terminal.flush();
             }
         }
