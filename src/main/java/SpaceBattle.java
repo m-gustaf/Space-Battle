@@ -9,57 +9,50 @@ public class SpaceBattle {
 
     public static void main(String[] args) throws Exception {
 
-
         Terminal terminal = createTerminal();
         Lives lives = new Lives(3);
         Score score = new Score();
 
         Alien alien = createAlien();
         Player player = createPlayer();
-        Laser laser = createLaser(player); //sending player to createLaser method to include player x/y values
+        Laser laser = createLaser(player); //sending player to method createLaser to include player x/y values
 
         drawPlayer(terminal, player);
         drawAlien(terminal, alien);
 
-        //while (lives.getLives() != 0) {
-            do {
-                gameTitle(terminal); //to show title while playing
-                playerScore(terminal, score); //to keep scores updated while playing
-                alienScore(terminal, score);
-                lives(terminal,lives);
+        do {
+            gameTitle(terminal); //to show info while playing
+            playerScore(terminal, score);
+            lives(terminal,lives);
 
-                if (laser.isActive() == true) { //if laser isActive is true ...
-                    laser = createLaser(player); //... creating laser
-                    drawLaser(terminal, laser, alien, player); //laser drawn using symbol '|' (via constructor)
-                    Thread.sleep(40); //sleep to get symbol '|' flash quickly before hiding it
-                    laser.setSymbol(' '); //setting laser to symbol ' ' (blank space)
-                    drawLaser(terminal, laser, alien, player); //laser drawn using symbol ' ' to hide symbol '|'
-                    terminal.flush();
-                }
+            if (laser.isActive() == true) { //if laser isActive is true ...
+                laser = createLaser(player); //... create laser
+                drawLaser(terminal, laser, alien, player); //laser drawn set to symbol '|'
+                Thread.sleep(40); //sleep getting symbol '|' to flash quickly before hiding it
+                laser.setSymbol(' '); //setting laser symbol to ' ' (blank space)
+                drawLaser(terminal, laser, alien, player); //laser drawn set to symbol ' ' (to hide symbol '|')
+                terminal.flush();
+            }
 
-                if (alien.isHidden() == true) { //alien isHidden is true if alien and enemy is at same Y value.
-                    alien = createAlien();
-                }
+            if (alien.isHidden() == true) { //alien isHidden is true if alien and enemy is at same Y value.
+                alien = createAlien();
+            }
 
-                KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score);
+            KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score, lives);
 
-                movePlayer(player, alien, laser, score, terminal, keyStroke);
-                drawPlayer(terminal, player);
+            movePlayer(player, alien, laser, score, terminal, keyStroke);
+            drawPlayer(terminal, player);
 
-                moveAlien(alien);
-                drawAlien(terminal, alien);
+            moveAlien(alien);
+            drawAlien(terminal, alien);
 
-                if (score.getAlienScore() == 3) {
-                    lives.updateLives();
-                    score.setAlienScore(0);
-                    score.setPlayerScore(0);
-                }
+            if (score.getPlayerScore() == 10) { //player get score 10 = player win
+                break;
+            }
 
-            } while (score.getPlayerScore() < 3 && lives.getLives() != 0); //first to get score 5 win //&& score.getAlienScore() < 5
-       // }
+        } while (lives.getLives() != 0); //game over when lives is 0
 
         playerScore(terminal, score);
-        alienScore(terminal, score);
         lives(terminal,lives);
         gameOver(terminal, score, lives);
     }
@@ -156,7 +149,7 @@ public class SpaceBattle {
         alien.moveDown();
     }
 
-    private static KeyStroke getUserKeyStroke(Terminal terminal, Player player, Alien alien, Score score) throws InterruptedException, IOException {
+    private static KeyStroke getUserKeyStroke(Terminal terminal, Player player, Alien alien, Score score, Lives lives) throws InterruptedException, IOException {
         KeyStroke keyStroke;
         int index = 0;
         if (alien.getSymbol() == 'Ÿ') { //to make this alien ship fly faster
@@ -167,11 +160,11 @@ public class SpaceBattle {
                     drawAlien(terminal, alien);
                     gameTitle(terminal);
                     playerScore(terminal, score);
-                    alienScore(terminal, score);
+                    lives(terminal, lives);
                     if (player.getY() == alien.getY()) { //to hide alien ship when player and alien 'y' are equal
                         alien.setSymbol(' ');
                         alien.setIsHidden(true); //set isHidden to true to create new alien in do-while loop
-                        score.updateAlienScore(); //if alien passes player alien get + 1 score
+                        lives.updateLives(); //if alien passes player, life countdown
                     }
                 }
                 index++;
@@ -185,11 +178,11 @@ public class SpaceBattle {
                     drawAlien(terminal, alien);
                     gameTitle(terminal);
                     playerScore(terminal, score);
-                    alienScore(terminal, score);
+                    lives(terminal, lives);
                     if (player.getY() == alien.getY()) {
                         alien.setSymbol(' ');
                         alien.setIsHidden(true);
-                        score.updateAlienScore();
+                        lives.updateLives();
                     }
                 }
                 index++;
@@ -208,7 +201,7 @@ public class SpaceBattle {
     }
 
     private static void playerScore(Terminal terminal, Score score) throws InterruptedException, IOException {
-        String displayPlayerScore = "Your score: " + score.getPlayerScore();
+        String displayPlayerScore = "Score: " + score.getPlayerScore();
         for (int i = 0; i < displayPlayerScore.length(); i++) {
             terminal.setCursorPosition(i + 2, 3);
             terminal.putCharacter(displayPlayerScore.charAt(i));
@@ -216,19 +209,10 @@ public class SpaceBattle {
         }
     }
 
-    private static void alienScore(Terminal terminal, Score score) throws InterruptedException, IOException {
-        String displayAlienScore = "Alien score: " + score.getAlienScore();
-        for (int i = 0; i < displayAlienScore.length(); i++) {
-            terminal.setCursorPosition(i + 2, 4);
-            terminal.putCharacter(displayAlienScore.charAt(i));
-            terminal.flush();
-        }
-    }
-
     private static void lives (Terminal terminal, Lives lives) throws InterruptedException, IOException {
         String live = "Lives: " + lives.getLives();
             for (int i = 0; i < live.length(); i++) {
-                terminal.setCursorPosition(i + 2, 5);
+                terminal.setCursorPosition(i + 2, 4);
                 terminal.putCharacter(live.charAt(i));
                 terminal.flush();
 
@@ -247,7 +231,7 @@ public class SpaceBattle {
             Thread.sleep(200); //sleep to get effect of slowly printing GAME OVER
         }
 
-        if (score.getPlayerScore() > score.getAlienScore()) {
+        if (lives.getLives() > 0) {
             for (int i = 0; i < playerWon.length(); i++) {
                 terminal.setCursorPosition(i + 25, 10);
                 terminal.putCharacter(playerWon.charAt(i));
