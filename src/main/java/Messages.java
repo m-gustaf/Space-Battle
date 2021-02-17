@@ -23,7 +23,7 @@ public class Messages {
     public void playerScore(Terminal terminal, Score score) throws InterruptedException, IOException {
         String displayPlayerScore = "Score: " + score.getPlayerScore();
         for (int i = 0; i < displayPlayerScore.length(); i++) {
-            terminal.setCursorPosition(i + 2, 4);
+            terminal.setCursorPosition(i + 2, 5);
             terminal.putCharacter(displayPlayerScore.charAt(i));
             terminal.flush();
         }
@@ -32,7 +32,7 @@ public class Messages {
     public void lives (Terminal terminal, Lives lives) throws InterruptedException, IOException {
         String live = "Lives: " + lives.getLives();
         for (int i = 0; i < live.length(); i++) {
-            terminal.setCursorPosition(i + 2, 5);
+            terminal.setCursorPosition(i + 2, 6);
             terminal.putCharacter(live.charAt(i));
             terminal.flush();
         }
