@@ -13,11 +13,12 @@ public class SpaceBattle {
         Lives lives = new Lives(3);
         Score score = new Score();
         Difficulty difficulty = new Difficulty(1,50); //initiating speed to 60
+        Messages messages = new Messages();
 
-        gameTitle(terminal); //to refresh info while playing
-        level(terminal, difficulty);
-        playerScore(terminal, score);
-        lives(terminal, lives);
+        messages.gameTitle(terminal); //to refresh info while playing
+        messages.level(terminal, difficulty);
+        messages.playerScore(terminal, score);
+        messages.lives(terminal, lives);
 
         Alien alien = createAlien();
         Player player = createPlayer();
@@ -25,18 +26,18 @@ public class SpaceBattle {
 
         drawPlayer(terminal, player);
 
-        objective(terminal); //display objective message
+        messages.objective(terminal); //display objective message
         Thread.sleep(2000); //keep objective visible 2000 millis
-        hideMessages(terminal); //hide objective message
+        messages.hideMessages(terminal); //hide objective message
         Thread.sleep(200); //wait 200 millis until drawing alien
 
         drawAlien(terminal, alien);
 
         do {
-            gameTitle(terminal); //to refresh info while playing
-            level(terminal, difficulty);
-            playerScore(terminal, score);
-            lives(terminal, lives);
+            messages.gameTitle(terminal); //to refresh info while playing
+            messages.level(terminal, difficulty);
+            messages.playerScore(terminal, score);
+            messages.lives(terminal, lives);
 
             if (laser.isActive() == true) { //if laser isActive  ...
                 laser = createLaser(player); //... initiate laser
@@ -48,9 +49,9 @@ public class SpaceBattle {
             }
 
             if (difficulty.getLevel() == 1 && score.getPlayerScore() == 10 || difficulty.getLevel() == 2 && score.getPlayerScore() == 20) {
-                levelUpMessage(terminal);
+                messages.levelUpMessage(terminal);
                 Thread.sleep(2000);
-                hideMessages(terminal);
+                messages.hideMessages(terminal);
                 terminal.flush();
                 difficulty.increaseGameSpeed(); //increase speed every 10th score
                 difficulty.increaseLevel(); //increase level every 10th score
@@ -60,11 +61,9 @@ public class SpaceBattle {
                 alien = createAlien();
             }
 
-            KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score, lives, difficulty);
-
+            KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score, lives, difficulty, messages);
             movePlayer(player, alien, laser, score, terminal, keyStroke);
             drawPlayer(terminal, player);
-
             moveAlien(alien);
             drawAlien(terminal, alien);
 
@@ -74,9 +73,9 @@ public class SpaceBattle {
 
         } while (lives.getLives() != 0); //loop until lives is 0 = player lost
 
-        playerScore(terminal, score);
-        lives(terminal, lives);
-        gameOver(terminal, score, lives);
+        messages.playerScore(terminal, score);
+        messages.lives(terminal, lives);
+        messages.gameOver(terminal, score, lives);
     }
 
     private static Terminal createTerminal() throws IOException {
@@ -170,18 +169,17 @@ public class SpaceBattle {
         alien.moveDown();
     }
 
-    private static KeyStroke getUserKeyStroke(Terminal terminal, Player player, Alien alien, Score score, Lives lives, Difficulty difficulty) throws InterruptedException, IOException {
+    private static KeyStroke getUserKeyStroke(Terminal terminal, Player player, Alien alien, Score score, Lives lives, Difficulty difficulty, Messages messages) throws InterruptedException, IOException {
         KeyStroke keyStroke;
         int index = 0;
-
         do {
             Thread.sleep(5);
             if (index % difficulty.getGameSpeed() == 0) { //setting difficulty/alien speed
                 moveAlien(alien);
                 drawAlien(terminal, alien);
-                gameTitle(terminal);
-                playerScore(terminal, score);
-                lives(terminal, lives);
+                messages.gameTitle(terminal);
+                messages.playerScore(terminal, score);
+                messages.lives(terminal, lives);
                 if (player.getY() == alien.getY()) {
                     alien.setSymbol(' ');
                     alien.setIsHidden(true);
@@ -192,98 +190,6 @@ public class SpaceBattle {
             keyStroke = terminal.pollInput();
         } while (keyStroke == null);
         return keyStroke;
-    }
-
-    private static void gameTitle(Terminal terminal) throws InterruptedException, IOException {
-        String title = "SPACE BATTLE";
-
-        for (int i = 0; i < title.length(); i++) {
-            terminal.setCursorPosition(i + 2, 1);
-            terminal.putCharacter(title.charAt(i));
-        }
-    }
-
-    private static void level(Terminal terminal, Difficulty difficulty) throws InterruptedException, IOException {
-        String level = "Level " + difficulty.getLevel();
-        for (int i = 0; i < level.length(); i++) {
-            terminal.setCursorPosition(i + 2, 3);
-            terminal.putCharacter(level.charAt(i));
-            terminal.flush();
-        }
-    }
-
-    private static void playerScore(Terminal terminal, Score score) throws InterruptedException, IOException {
-        String displayPlayerScore = "Score: " + score.getPlayerScore();
-        for (int i = 0; i < displayPlayerScore.length(); i++) {
-            terminal.setCursorPosition(i + 2, 5);
-            terminal.putCharacter(displayPlayerScore.charAt(i));
-            terminal.flush();
-        }
-    }
-
-    private static void lives (Terminal terminal, Lives lives) throws InterruptedException, IOException {
-        String live = "Lives: " + lives.getLives();
-            for (int i = 0; i < live.length(); i++) {
-                terminal.setCursorPosition(i + 2, 6);
-                terminal.putCharacter(live.charAt(i));
-                terminal.flush();
-            }
-    }
-
-    private static void objective (Terminal terminal) throws InterruptedException, IOException {
-        String objective = "Eliminate 30 aliens";
-        for (int i = 0; i < objective.length(); i++) {
-            terminal.setCursorPosition(i + 28, 9);
-            terminal.putCharacter(objective.charAt(i));
-            terminal.flush();
-        }
-    }
-
-    private static void levelUpMessage (Terminal terminal) throws InterruptedException, IOException {
-        String levelUp = "Level Up!";
-        for (int i = 0; i < levelUp.length(); i++) {
-            terminal.setCursorPosition(i + 34, 9);
-            terminal.putCharacter(levelUp.charAt(i));
-            terminal.flush();
-        }
-
-    }
-
-    private static void gameOver(Terminal terminal, Score score, Lives lives) throws InterruptedException, IOException {
-        String gameOver = "GAME OVER";
-        String playerWon = "You beat the game!";
-        String playerLost = "You lost, try again!";
-
-        for (int i = 0; i < gameOver.length(); i++) {
-            terminal.setCursorPosition(i + 28, 9);
-            terminal.putCharacter(gameOver.charAt(i));
-            terminal.flush();
-            Thread.sleep(200); //sleep to get effect of slowly printing GAME OVER
-        }
-
-        if (lives.getLives() > 0) {
-            for (int i = 0; i < playerWon.length(); i++) {
-                terminal.setCursorPosition(i + 28, 11);
-                terminal.putCharacter(playerWon.charAt(i));
-                terminal.flush();
-            }
-        }
-        if (lives.getLives() == 0) {
-            for (int i = 0; i < playerLost.length(); i++) {
-                terminal.setCursorPosition(i + 28, 11);
-                terminal.putCharacter(playerLost.charAt(i));
-                terminal.flush();
-            }
-        }
-    }
-
-    private static void hideMessages (Terminal terminal) throws InterruptedException, IOException {
-        String hideMessages = "                                        ";
-        for (int i = 0; i < hideMessages.length(); i++) {
-            terminal.setCursorPosition(i + 20, 9);
-            terminal.putCharacter(hideMessages.charAt(i));
-            terminal.flush();
-        }
     }
 }
 
