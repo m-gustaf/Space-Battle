@@ -5,9 +5,7 @@ public class Score {
     public int getPlayerScore() {
         return playerScore;
     }
-    public void setPlayerScore(int playerScore) {
-        this.playerScore = playerScore;
-    }
+
     public void updatePlayerScore() {
         playerScore++;
     }
