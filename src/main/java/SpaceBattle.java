@@ -26,9 +26,13 @@ public class SpaceBattle {
 
         drawPlayer(terminal, player);
 
-        messages.objective(terminal); //display objective message
-        Thread.sleep(2000); //keep objective visible 2000 millis
-        messages.hideMessages(terminal); //hide objective message
+        messages.keys(terminal); //display keys message
+        Thread.sleep(2000); //keep message visible 2000 millis
+        messages.hideMessages(terminal); //hide message
+        messages.objective(terminal);
+        Thread.sleep(2000);
+        messages.hideMessages(terminal);
+
         Thread.sleep(200); //wait 200 millis until drawing alien
 
         drawAlien(terminal, alien);
@@ -162,10 +166,6 @@ public class SpaceBattle {
                     terminal.flush();
                     break;
                 }
-            case ArrowDown:
-                alien.setSymbol(' '); //possibility to cheat by resetting alien
-                alien.setIsHidden(true);
-                break;
         }
     }
 

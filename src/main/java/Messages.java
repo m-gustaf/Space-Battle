@@ -38,10 +38,19 @@ public class Messages {
         }
     }
 
+    public void keys (Terminal terminal) throws InterruptedException, IOException {
+        String keys = "Arrow keys to move/fire";
+        for (int i = 0; i < keys.length(); i++) {
+            terminal.setCursorPosition(i + 27, 9);
+            terminal.putCharacter(keys.charAt(i));
+            terminal.flush();
+        }
+    }
+
     public void objective (Terminal terminal) throws InterruptedException, IOException {
         String objective = "Eliminate 30 aliens!";
         for (int i = 0; i < objective.length(); i++) {
-            terminal.setCursorPosition(i + 28, 9);
+            terminal.setCursorPosition(i + 27, 9);
             terminal.putCharacter(objective.charAt(i));
             terminal.flush();
         }
@@ -50,7 +59,7 @@ public class Messages {
     public void levelUpMessage (Terminal terminal) throws InterruptedException, IOException {
         String levelUp = "Level Up!";
         for (int i = 0; i < levelUp.length(); i++) {
-            terminal.setCursorPosition(i + 34, 9);
+            terminal.setCursorPosition(i + 32, 9);
             terminal.putCharacter(levelUp.charAt(i));
             terminal.flush();
         }
@@ -62,7 +71,7 @@ public class Messages {
         String playerLost = "You lost, try again!";
 
         for (int i = 0; i < gameOver.length(); i++) {
-            terminal.setCursorPosition(i + 28, 9);
+            terminal.setCursorPosition(i + 27, 9);
             terminal.putCharacter(gameOver.charAt(i));
             terminal.flush();
             Thread.sleep(200); //sleep to get effect of slowly printing GAME OVER
@@ -70,14 +79,14 @@ public class Messages {
 
         if (lives.getLives() > 0) {
             for (int i = 0; i < playerWon.length(); i++) {
-                terminal.setCursorPosition(i + 28, 11);
+                terminal.setCursorPosition(i + 27, 11);
                 terminal.putCharacter(playerWon.charAt(i));
                 terminal.flush();
             }
         }
         if (lives.getLives() == 0) {
             for (int i = 0; i < playerLost.length(); i++) {
-                terminal.setCursorPosition(i + 28, 11);
+                terminal.setCursorPosition(i + 27, 11);
                 terminal.putCharacter(playerLost.charAt(i));
                 terminal.flush();
             }
@@ -85,7 +94,7 @@ public class Messages {
     }
 
     public void hideMessages (Terminal terminal) throws InterruptedException, IOException {
-        String hideMessages = "                                        ";
+        String hideMessages = "                                             ";
         for (int i = 0; i < hideMessages.length(); i++) {
             terminal.setCursorPosition(i + 20, 9);
             terminal.putCharacter(hideMessages.charAt(i));
