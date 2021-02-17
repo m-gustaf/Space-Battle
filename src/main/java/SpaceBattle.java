@@ -62,7 +62,7 @@ public class SpaceBattle {
             }
 
             KeyStroke keyStroke = getUserKeyStroke(terminal, player, alien, score, lives, difficulty, messages);
-            movePlayer(player, alien, laser, score, terminal, keyStroke);
+            movePlayer(player, alien, laser, score, terminal, difficulty, keyStroke);
             drawPlayer(terminal, player);
             moveAlien(alien);
             drawAlien(terminal, alien);
@@ -140,7 +140,7 @@ public class SpaceBattle {
             }
     }
 
-    private static void movePlayer(Player player, Alien alien, Laser laser, Score score, Terminal terminal, KeyStroke keyStroke) throws IOException {
+    private static void movePlayer(Player player, Alien alien, Laser laser, Score score, Terminal terminal, Difficulty difficulty, KeyStroke keyStroke) throws IOException {
         switch (keyStroke.getKeyType()) {
             case ArrowLeft:
                 player.moveLeft();
@@ -162,6 +162,10 @@ public class SpaceBattle {
                     terminal.flush();
                     break;
                 }
+            case ArrowDown:
+                alien.setSymbol(' '); //possibility to cheat by resetting alien
+                alien.setIsHidden(true);
+                break;
         }
     }
 

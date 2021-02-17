@@ -15,6 +15,10 @@ public class Difficulty {
         return gameSpeed;
     }
 
+    public void setGameSpeed(int gameSpeed) {
+        this.gameSpeed = gameSpeed;
+    }
+
     public void increaseLevel() {
         level++;
     }
